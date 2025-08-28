@@ -1,4 +1,7 @@
-import { SectionDescription, SectionTitle } from "@/components/reusables/titles";
+import {
+    SectionDescription,
+    SectionTitle,
+} from "@/components/reusables/titles";
 import {
     ModalWrapper,
     SectionHeaderWrapper,
@@ -8,19 +11,27 @@ import { getMessagesBySpaceId } from "@/actions/message";
 
 interface RealtimeChatProps {
     className?: string;
-    spaceId : string;
+    chatInterfaceClassName?: string;
+    spaceId: string;
 }
 
-const RealtimeChat: React.FC<RealtimeChatProps> = async ({ className, spaceId }) => {
+const RealtimeChat: React.FC<RealtimeChatProps> = async ({
+    className,
+    spaceId,
+    chatInterfaceClassName,
+}) => {
     const { messages } = await getMessagesBySpaceId(spaceId);
 
     return (
-        <ModalWrapper className={`${className} flex flex-col`}>
+        <ModalWrapper className={`${className} border-none`}>
             <SectionHeaderWrapper>
                 <SectionTitle> Space Chat </SectionTitle>
-                <SectionDescription> Collaborate with space members in realtime. </SectionDescription>
+                <SectionDescription>
+                    {" "}
+                    Collaborate with space members in realtime.{" "}
+                </SectionDescription>
             </SectionHeaderWrapper>
-            <ChatInterface spaceId={spaceId} messages={messages} />
+            <ChatInterface className={chatInterfaceClassName} spaceId={spaceId} messages={messages} />
         </ModalWrapper>
     );
 };

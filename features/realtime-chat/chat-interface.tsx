@@ -32,11 +32,13 @@ declare global {
 interface ChatInterfaceProps {
     spaceId: string;
     messages: FormattedMessages[];
+    className?: string;
 }
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({
     spaceId,
     messages: initialMessages,
+    className,
 }) => {
     const [messages, setMessages] =
         useState<FormattedMessages[]>(initialMessages);
@@ -56,19 +58,22 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         const myChannel = supabase.channel(`${spaceId}-messages`);
 
         myChannel
-            .on("broadcast", { event: "new-message" }, (payload) => { 
+            .on("broadcast", { event: "new-message" }, (payload) => {
                 console.log("New message received!", payload);
 
                 // Inside the payload, there is a payload object that contains the message details
                 const newMessage = payload.payload;
-                
+
+                // Check if the user owned the payload
+                // const isOwned = newMessage.accountId === newMessage.account_id;
+
                 setMessages((prevMessages) => [
                     ...prevMessages,
                     {
-                        id : newMessage.id,
-                        content : newMessage.message,
-                        username : newMessage.username,
-                        isOwned : newMessage.isOwned, 
+                        id: newMessage.id,
+                        content: newMessage.message,
+                        username: newMessage.username,
+                        isOwned: newMessage.isOwned,
                     } as FormattedMessages,
                 ]);
             })
@@ -112,11 +117,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                         type: "broadcast",
                         event: "new-message",
                         payload: {
-                            id : res.message!.id,
+                            id: res.message!.id,
                             message: values.message,
                             spaceId: spaceId,
-                            username : res.message!.username,
-                            isOwned : res.message!.isOwned,
+                            username: res.message!.username,
+                            isOwned: res.message!.isOwned,
                         },
                     })
                     .then(() => {
@@ -128,10 +133,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                         toast.error("Message sent but failed to broadcast");
                     });
 
-                    setMessages((prevMessages) => [
-                        ...prevMessages,
-                        res.message as FormattedMessages,
-                    ]);
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    res.message as FormattedMessages,
+                ]);
             } else {
                 console.error("No channel reference available");
                 toast.error(
@@ -145,9 +150,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     };
 
     return (
-        <div className="flex flex-col  flex-1">
+        <div className="flex-1">
             {/* Messages Area  */}
-            <section className="flex-1 space-y-4 overflow-y-auto flex flex-col">
+            <section className=" space-y-4 mb-[2rem] h-[45vh] lg:h-[52vh] overflow-y-auto ">
                 {messages.map((message) =>
                     message.isOwned ? (
                         <React.Fragment key={message.id}>
@@ -168,7 +173,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             </section>
 
             {/* Send Message Area  */}
-            <section className="flex gap-2">
+            <section className="bottom-0 bg-purple-100 sticky flex gap-2 mt-4 py-1.5 px-3 rounded-lg shadow-md">
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(handleSendMessage)}
@@ -219,7 +224,7 @@ const OwnedMessages: React.FC<MessageUIProps> = ({ username, content }) => {
         <div className="flex flex-row-reverse gap-2 border rounded-lg p-3 w-fit ml-20 place-self-end">
             <div className="w-7 h-7 shrink-0  rounded-full bg-blue-500" />
             <div>
-                <div className="flex justify-between items-center flex-row-reverse">
+                <div className="flex justify-between gap-10 items-center flex-row-reverse">
                     <small className="font-medium"> {username} </small>
                     <small className="text-xs text-muted-foreground">
                         {" "}
@@ -237,7 +242,7 @@ const NotOwnedMessages: React.FC<MessageUIProps> = ({ username, content }) => {
         <div className="flex gap-2 border rounded-lg p-3 mr-20 w-fit place-self-start">
             <div className="w-7 h-7 shrink-0  rounded-full bg-blue-500" />
             <div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between gap-10 items-center">
                     <small className="font-medium"> {username} </small>
                     <small className="text-xs text-muted-foreground">
                         {" "}

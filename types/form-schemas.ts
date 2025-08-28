@@ -42,3 +42,10 @@ export const sendMesageFormSchema = z.object({
 export const isEditingAccountDetailsFormSchema = z.object({
     username : z.string().min(1, "Username is required").min(3, "Username must be at least 3 characters long"),
 })
+
+export const feedbackFormSchema = z.object({
+    feedback: z.string().min(1, "Feedback cannot be empty").max(500, "Feedback must be at most 500 characters long"),
+    // another field for highlighting the feature or part of the app for this feedback 
+    feature: z.string().optional(),
+    sendEmail: z.boolean().optional(),
+})

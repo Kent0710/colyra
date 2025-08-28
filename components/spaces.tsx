@@ -32,10 +32,11 @@ export const SpacesLoader = () => {
 
 export const Spaces = async () => {
     const { getSpaces } = await import("@/actions/space");
-    const { spaces } = await getSpaces();
+    const { spaces, data } = await getSpaces();
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* <pre> {JSON.stringify(data, null, 2)} </pre> */}
             {spaces.map((space) => (
                 <Card key={space.id} id={space.id}>
                     <CardHeader>

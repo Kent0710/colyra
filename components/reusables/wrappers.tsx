@@ -1,5 +1,3 @@
-import { SidebarTrigger } from "../ui/sidebar";
-
 export const PageWrapper = ({
     children,
     className,
@@ -7,19 +5,23 @@ export const PageWrapper = ({
     children: React.ReactNode;
     className?: string;
 }) => (
-    <div className={`p-8 space-y-4 ${className} min-h-screen flex flex-col`}>
+    <div
+        className={`px-8 lg:px-16 space-y-4 ${className} flex-1 flex flex-col`}
+    >
         {children}
     </div>
 );
 
 export const PageHeaderWrapper = ({
     children,
+    className,
 }: {
     children: React.ReactNode;
+    className?: string;
 }) => (
-    <header className="flex items-center gap-4 ">
-        <SidebarTrigger />
-        <div>{children}</div>
+    <header className={`${className}`}>
+      
+        {children}
     </header>
 );
 
@@ -29,7 +31,11 @@ export const SectionHeaderWrapper = ({
 }: {
     children: React.ReactNode;
     className?: string;
-}) => <section className={className}>{children}</section>;
+}) => (
+    <section className={`${className}`}>
+        {children}
+    </section>
+);
 
 export const GroupButtonsWrapper = ({
     children,
@@ -38,7 +44,9 @@ export const GroupButtonsWrapper = ({
     children: React.ReactNode;
     className?: string;
 }) => (
-    <div className={`${className ? className : "space-x-2"}`}>{children}</div>
+    <div className={`${className ? className : "space-x-2 flex items-center"}`}>
+        {children}
+    </div>
 );
 
 export const ModalWrapper = ({

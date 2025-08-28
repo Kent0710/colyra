@@ -1,5 +1,4 @@
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
+import AppHeader from "@/components/app-header";
 
 export default function MainLayout({
     children,
@@ -7,11 +6,15 @@ export default function MainLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <SidebarProvider>
-            <AppSidebar />
-            <main className="w-full">
+        <div className="flex flex-col h-screen">
+            <AppHeader />
+
+            {/* Parent is flex-col with h-screen, so main gets bounded height */}
+            <main className="flex-1 min-h-0 overflow-y-auto mt-[3rem] lg:mt-0 lg:py-[1.5rem] py-[1rem] ">
                 {children}
             </main>
-        </SidebarProvider>
+
+            {/* <BottomBar /> */}
+        </div>
     );
 }

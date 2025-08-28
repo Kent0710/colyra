@@ -6,30 +6,26 @@ import { createSpaceFormSchema } from "@/types/form-schemas";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { getAccount } from "./account";
 
 export async function getSpaces(): Promise<{
     spaces: SpaceTableSchema[];
     error: string | null;
 }> {
     const supabase = await createClient();
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-        redirect("/login");
-    }
+    const {account} = await getAccount();
 
     const { data, error } = await supabase
         .from("user_space")
         .select(`*, space(*)`)
-        .eq("user_id", user.id);
+        .eq("account_id", account.id);
 
     if (!error) {
         const spaces = data?.map((entry) => entry.space) || [];
 
         return {
             spaces: spaces || [],
+            data : data,
             error: null,
         };
     }
@@ -76,20 +72,15 @@ export async function createSpace(
     values: z.infer<typeof createSpaceFormSchema>
 ) {
     const supabase = await createClient();
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
 
-    if (!user) {
-        redirect("/login");
-    }
+    const { account } = await getAccount();
 
     const { data, error } = await supabase
         .from("space")
         .insert([
             {
                 name: values.name,
-                user_id: user.id,
+                account_id: account.id,
                 code: values.code,
             },
         ])
@@ -103,8 +94,10 @@ export async function createSpace(
             .from("user_space")
             .insert([
                 {
-                    user_id: user.id,
+                    account_id: account.id,
                     space_id: data.id,
+                    isApproved : true,
+                    isOwner : true,
                 },
             ]);
 
@@ -137,13 +130,8 @@ export async function joinSpace(
     code: string
 ): Promise<{ success: boolean; error: string | null }> {
     const supabase = await createClient();
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-        redirect("/login");
-    }
+    
+    const {account} = await getAccount();
 
     // Check if the space with the given code exists
     const { data: space, error: fetchSpaceError } = await supabase
@@ -163,7 +151,7 @@ export async function joinSpace(
     const { data: existingEntry, error: existingEntryError } = await supabase
         .from("user_space")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("account_id", account.id)
         .eq("space_id", space.id)
         .single();
 
@@ -177,8 +165,9 @@ export async function joinSpace(
     // Add an entry to user_space to map the user to the space
     const { error: userSpaceError } = await supabase.from("user_space").insert([
         {
-            user_id: user.id,
+            account_id: account.id,
             space_id: space.id,
+            isApproved : false, // Needs approval from the space owner
         },
     ]);
 

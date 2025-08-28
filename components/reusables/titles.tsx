@@ -10,6 +10,10 @@ export const SectionTitle = ({ children }: { children: React.ReactNode }) => (
     <h2 className="text-lg font-semibold">{children}</h2>
 );
 
+export const SectionSubTitle = ({ children }: { children: React.ReactNode }) => (
+    <h3 className="text-md font-medium">{children}</h3>
+);
+
 export const SectionDescription = ({ children }: { children: React.ReactNode }) => (
     <p className="text-sm text-muted-foreground">{children}</p>
 );

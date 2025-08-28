@@ -6,6 +6,12 @@ import {
 } from "@/components/reusables/wrappers";
 import RealtimeChat from "@/features/realtime-chat/realtime-chat";
 import Resources from "@/features/resources/resources";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Settings2 } from "lucide-react";
+import Members from "@/features/members/members";
+import { Suspense } from "react";
+import { Fallback } from "@radix-ui/react-avatar";
 
 interface SingleSpacePageProps {
     params: {
@@ -21,17 +27,51 @@ const SingleSpacePage: React.FC<SingleSpacePageProps> = async ({ params }) => {
     }
 
     return (
-        <PageWrapper>
-            <PageHeaderWrapper>
-                <PageTitle> {space.name} </PageTitle>
-                <PageTitleDescription>
+        <PageWrapper className="h-full">
+            <PageHeaderWrapper className="flex items-center justify-between">
+                <div>
+                    <PageTitle> {space.name} </PageTitle>
+                    <PageTitleDescription>
+                        {" "}
+                        Manage this space and collaborate with others.{" "}
+                    </PageTitleDescription>
+                </div>
+                <Button>
                     {" "}
-                    Manage this space and collaborate with others.{" "}
-                </PageTitleDescription>
+                    <Settings2 />{" "}
+                </Button>
             </PageHeaderWrapper>
-            <main className="grid grid-cols-5 gap-4 flex-1">
-                <RealtimeChat className="col-span-2" spaceId={spaceId} />
-                <Resources className="col-span-3" spaceId={spaceId} />
+            <Tabs defaultValue="resources" className="lg:hidden h-full">
+                <TabsList>
+                    <TabsTrigger value="resources">Resources</TabsTrigger>
+                    <TabsTrigger value="chat">Space Chat</TabsTrigger>
+                    <TabsTrigger value="members">Members</TabsTrigger>
+                </TabsList>
+                <TabsContent value="chat" className="h-full">
+                    <Suspense fallback={<div>Loading chat...</div>}>
+                        <RealtimeChat
+                            spaceId={spaceId}
+                            className="h-full flex flex-col"
+                        />
+                    </Suspense>
+                </TabsContent>
+                <TabsContent value="resources">
+                    <Suspense fallback={<div>Loading resources...</div>}>
+                        <Resources spaceId={spaceId} className="border-none " />
+                    </Suspense>
+                </TabsContent>
+                <TabsContent value="members">
+                    <Suspense fallback={<div>Loading members...</div>}>
+                        <Members spaceId={spaceId} className="border-none" />
+                    </Suspense>
+                </TabsContent>
+            </Tabs>
+            <main className="grid-cols-5 gap-4 flex-1 hidden lg:grid">
+                <RealtimeChat className="col-span-2 " spaceId={spaceId} />
+                <Resources
+                    className="col-span-5 lg:col-span-3"
+                    spaceId={spaceId}
+                />
             </main>
         </PageWrapper>
     );

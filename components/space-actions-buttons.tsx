@@ -79,7 +79,7 @@ const SpaceActionsButtons = () => {
 
         if (res.success) {
             joinSpaceForm.reset();
-            toast.success("Joined space successfully!");
+            toast.success("Success. Please wait for owner approval.");
         } else {
             toast.error(res.error || "Something went wrong.");
         }

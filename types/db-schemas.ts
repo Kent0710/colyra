@@ -26,3 +26,10 @@ export interface MessageTableSchema {
     user_id : string;
     space_id : string;
 }
+
+export interface UserSpaceTableSchema {
+    account_id : string;
+    space_id : string;
+    isApproved : boolean;
+    isOwner : boolean;
+}

@@ -29,7 +29,6 @@ import { getResourcesBySpaceId } from "@/actions/resource";
 import { Label } from "@/components/ui/label";
 import CopyResourceLinkButton from "./copy-resource-link-button";
 import { DeleteResourceButton } from "./resources-buttons";
-import { Button } from "@/components/ui/button";
 
 interface ResourcesProps {
     className?: string;
@@ -52,7 +51,7 @@ const Resources: React.FC<ResourcesProps> = async ({ className, spaceId }) => {
                 <UploadResourceButton spaceId={spaceId} />
             </GroupButtonsWrapper>
             {/* Resource list will go here */}
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:overflow-y-auto lg:max-h-[52vh] pr-4">
                 {resources.map((resource) => (
                     <Dialog key={resource.id}>
                         <DialogTrigger>
