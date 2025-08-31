@@ -30,8 +30,12 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 import { useSpacesStore } from "@/stores/useSpacesStore";
+import { Loader2 } from "lucide-react";
+import React from "react";
 
 const SpaceActionsButtons = () => {
+    const [dialogOpen, setDialogOpen] = React.useState(false);
+
     const createSpaceForm = useForm({
         resolver: zodResolver(createSpaceFormSchema),
         defaultValues: {
@@ -60,7 +64,7 @@ const SpaceActionsButtons = () => {
         if (res.success && res.space) {
             // Update the spaces store
             useSpacesStore.getState().addSpace(res.space);
-
+            setDialogOpen(false);
             createSpaceForm.reset();
             toast.success("Space created successfully!");
         } else {
@@ -93,7 +97,7 @@ const SpaceActionsButtons = () => {
     return (
         <GroupButtonsWrapper>
             <div className="space-x-2">
-                <Dialog>
+                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <DialogTrigger asChild>
                         <Button> Create space </Button>
                     </DialogTrigger>
@@ -167,7 +171,22 @@ const SpaceActionsButtons = () => {
                                     )}
                                 />
 
-                                <Button type="submit">Create Space</Button>
+                                <Button
+                                    type="submit"
+                                    className="w-[7rem]"
+                                    disabled={
+                                        createSpaceForm.formState.isSubmitting
+                                    }
+                                >
+                                    {createSpaceForm.formState.isSubmitting ? (
+                                        <>
+                                            <Loader2 className="animate-spin" />{" "}
+                                            Creating...
+                                        </>
+                                    ) : (
+                                        "Create Space"
+                                    )}
+                                </Button>
                             </form>
                         </Form>
                     </DialogContent>

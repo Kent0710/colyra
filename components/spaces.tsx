@@ -52,8 +52,6 @@ const Spaces: React.FC<SpacesProps> = ({ spaces: initialSpaces }) => {
     }
 
     const [filter, setFilter] = React.useState<string>("all");
-    // For pagination
-    const [page, setPage] = React.useState<number>(1);
     // For pagination loading state
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
@@ -64,25 +62,36 @@ const Spaces: React.FC<SpacesProps> = ({ spaces: initialSpaces }) => {
 
         const { spaces: newSpaces } = await getSpaces({
             limit: 5,
-            offset: page * 5,
-            filter: filter === "all" ? undefined : (filter as any),
+            offset: spaces.length, // Use current spaces length as offset
+            filter: filter as
+                | "owned"
+                | "approved"
+                | "pending"
+                | "rejected"
+                | "all",
         });
-        // Append new spaces to the existing ones
-        setSpaces([...spaces, ...newSpaces]);
-        setPage((prev) => prev + 1);
+
+        if (newSpaces.length > 0) {
+            // Append new spaces to the existing ones
+            setSpaces([...spaces, ...newSpaces]);
+        }
         setIsLoading(false);
     };
 
     const applyFilter = async (newFilter: string) => {
         setIsLoading(true);
         setFilter(newFilter);
-        setPage(1);
 
         const { getSpaces } = await import("@/actions/space");
         const { spaces: newSpaces } = await getSpaces({
             limit: 5,
             offset: 0,
-            filter: newFilter === "all" ? undefined : (newFilter as any),
+            filter: newFilter as
+                | "owned"
+                | "approved"
+                | "pending"
+                | "rejected"
+                | "all",
         });
 
         setSpaces(newSpaces);
@@ -126,47 +135,51 @@ const Spaces: React.FC<SpacesProps> = ({ spaces: initialSpaces }) => {
                     </SelectContent>
                 </Select>
             </SectionHeaderWrapper>
-            {spaces.map((space, index) => (
-                <Card key={space.name + index} className="my-4" id={space.space_id}>
-                    <CardHeader>
-                        <div className="flex justify-between items-center">
-                            <CardTitle>{space.name}</CardTitle>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost">
-                                        <Ellipsis />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                    <DropdownMenuLabel>
-                                        Space Actions
-                                    </DropdownMenuLabel>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem>
-                                        <DeleteSpace spaceId={space.space_id} />
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
+            <section className="grid grid-cols-1 mt-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {spaces.map((space, index) => (
+                    <Card key={space.name + index} id={space.space_id}>
+                        <CardHeader>
+                            <div className="flex justify-between items-center">
+                                <CardTitle>{space.name}</CardTitle>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost">
+                                            <Ellipsis />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <DropdownMenuLabel>
+                                            Space Actions
+                                        </DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem>
+                                            <DeleteSpace
+                                                spaceId={space.space_id}
+                                            />
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
 
-                        <CardDescription>
-                            {space.isOwner
-                                ? "You own this space"
-                                : space.isApproved
-                                ? "You are approved in this space"
-                                : "Your request is pending"}
-                        </CardDescription>
-                    </CardHeader>
+                            <CardDescription>
+                                {space.isOwner
+                                    ? "You own this space"
+                                    : space.isApproved
+                                    ? "You are approved in this space"
+                                    : "Your request is pending"}
+                            </CardDescription>
+                        </CardHeader>
 
-                    <CardFooter>
-                        <CardAction>
-                            <Link href={`/spaces/${space.space_id}`}>
-                                <Button>View Space</Button>
-                            </Link>
-                        </CardAction>
-                    </CardFooter>
-                </Card>
-            ))}
+                        <CardFooter>
+                            <CardAction>
+                                <Link href={`/spaces/${space.space_id}`}>
+                                    <Button>View Space</Button>
+                                </Link>
+                            </CardAction>
+                        </CardFooter>
+                    </Card>
+                ))}
+            </section>
 
             {spaces.length === 0 ? (
                 <Alert className="my-4">

@@ -1,6 +1,7 @@
 import { getSpaceById } from "@/actions/space";
 import { PageTitle, PageTitleDescription } from "@/components/reusables/titles";
 import {
+    GroupButtonsWrapper,
     PageHeaderWrapper,
     PageWrapper,
 } from "@/components/reusables/wrappers";
@@ -8,10 +9,17 @@ import RealtimeChat from "@/features/realtime-chat/realtime-chat";
 import Resources from "@/features/resources/resources";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Settings2 } from "lucide-react";
+import { Settings2, Users } from "lucide-react";
 import Members from "@/features/members/members";
 import { Suspense } from "react";
-import { Fallback } from "@radix-ui/react-avatar";
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet";
 
 interface SingleSpacePageProps {
     params: {
@@ -36,10 +44,27 @@ const SingleSpacePage: React.FC<SingleSpacePageProps> = async ({ params }) => {
                         Manage this space and collaborate with others.{" "}
                     </PageTitleDescription>
                 </div>
-                <Button>
-                    {" "}
-                    <Settings2 />{" "}
-                </Button>
+                <GroupButtonsWrapper>
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <Button className="hidden lg:inline-flex">
+                                <Users /> Members
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent className="rounded-l-xl">
+                            <SheetTitle className="hidden"></SheetTitle>
+                            <Members
+                                spaceId={spaceId}
+                                className="border-none"
+                            />
+                        </SheetContent>
+                    </Sheet>
+
+                    <Button>
+                        {" "}
+                        <Settings2 />{" "}
+                    </Button>
+                </GroupButtonsWrapper>
             </PageHeaderWrapper>
             <Tabs defaultValue="resources" className="lg:hidden h-full">
                 <TabsList>
