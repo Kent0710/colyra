@@ -9,7 +9,7 @@ import {
     PageWrapper,
 } from "@/components/reusables/wrappers";
 import SpaceActionsButtons from "@/components/space-actions-buttons";
-import { SpacesLoader } from "@/components/spaces";
+import SpacesLoader from "@/components/spaces-loader";
 import { Button } from "@/components/ui/button";
 import { Filter } from "lucide-react";
 
@@ -23,15 +23,7 @@ const HomePage = () => {
                 </PageTitleDescription>
             </PageHeaderWrapper>
             <SpaceActionsButtons />
-            <ModalWrapper className="border-none">
-                <div className="flex items-center justify-between">
-                    <SectionTitle> Your Spaces </SectionTitle>
-                    <Button variant={'outline'}>
-                        <Filter /> Filter
-                    </Button>
-                </div>
-                <SpacesLoader />
-            </ModalWrapper>
+            <SpacesLoader />
         </PageWrapper>
     );
 };

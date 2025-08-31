@@ -8,32 +8,79 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getAccount } from "./account";
 
-export async function getSpaces(): Promise<{
-    spaces: SpaceTableSchema[];
+export interface GetSpacesSpaceResponseType {
+    isApproved: string;
+    isOwner: string;
+    space_id: string;
+    name: string;
+}
+
+export async function getSpaces({
+    limit = 5,
+    offset = 0,
+    filter,
+} : {
+    limit?: number;
+    offset?: number;
+    filter?: "owned" | "approved" | "pending" | "rejected" | "all";
+}): Promise<{
+    spaces: GetSpacesSpaceResponseType[];
     error: string | null;
 }> {
     const supabase = await createClient();
-    const {account} = await getAccount();
+    const { account } = await getAccount();
 
-    const { data, error } = await supabase
+    let query = supabase
         .from("user_space")
-        .select(`*, space(*)`)
-        .eq("account_id", account.id);
+        .select(`*, space_id(name, id)`)
+        .eq("account_id", account.id)
+        .range(offset, offset + limit - 1);
+
+    switch (filter) {
+        case "owned":
+            query = query.eq("isOwner", true).eq("isApproved", true);
+            break;
+        case "approved":
+            query = query.eq("isApproved", true);
+            break;
+        case "pending":
+            query = query.eq("isApproved", false);
+            break;
+        case "rejected":
+            query = query.eq("isApproved", false).eq("isRejected", true);
+            break;
+        case "all":
+            // No additional filter
+            break;
+        default:
+            // No additional filter
+            // Return an invalid filter error
+            return {
+                spaces: [],
+                error: "Invalid filter",
+            }
+    };
+
+    const { data, error } = await query;
 
     if (!error) {
-        const spaces = data?.map((entry) => entry.space) || [];
+        const spaces = data.map((item) => ({
+            isApproved: item.isApproved,
+            isOwner: item.isOwner,
+            space_id: item.space_id.id,
+            name: item.space_id.name,
+        }));
 
         return {
-            spaces: spaces || [],
-            data : data,
+            spaces : spaces || [],
             error: null,
         };
+    } else {
+        return {
+            spaces: [],
+            error: error.message,
+        };
     }
-
-    return {
-        spaces: [],
-        error: error.message,
-    };
 }
 
 export async function getSpaceById(spaceId: string): Promise<{
@@ -96,20 +143,23 @@ export async function createSpace(
                 {
                     account_id: account.id,
                     space_id: data.id,
-                    isApproved : true,
-                    isOwner : true,
+                    isApproved: true,
+                    isOwner: true,
                 },
             ]);
 
         if (userSpaceError) {
             await supabase.from("space").delete().eq("id", data.id);
 
-            console.error("Fatal error on creating a space: ", userSpaceError.message);
+            console.error(
+                "Fatal error on creating a space: ",
+                userSpaceError.message
+            );
 
             return {
-                success : false,
-                error : 'Fatal error. Please try again.'
-            }
+                success: false,
+                error: "Fatal error. Please try again.",
+            };
         }
 
         revalidatePath("/home");
@@ -130,8 +180,8 @@ export async function joinSpace(
     code: string
 ): Promise<{ success: boolean; error: string | null }> {
     const supabase = await createClient();
-    
-    const {account} = await getAccount();
+
+    const { account } = await getAccount();
 
     // Check if the space with the given code exists
     const { data: space, error: fetchSpaceError } = await supabase
@@ -167,7 +217,7 @@ export async function joinSpace(
         {
             account_id: account.id,
             space_id: space.id,
-            isApproved : false, // Needs approval from the space owner
+            isApproved: false, // Needs approval from the space owner
         },
     ]);
 
