@@ -1,7 +1,6 @@
 "use client";
 
 import { GroupButtonsWrapper } from "./reusables/wrappers";
-import { Button } from "./ui/button";
 import {
     Sheet,
     SheetContent,
@@ -38,6 +37,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import React, { useMemo } from "react";
 import { usePathname } from "next/navigation";
 
+
+import { Button } from "@/components/ui/button";
+
+import SearchSpace from "./search-space";
+
 const AppHeader = () => {
     const isMobile = useIsMobile();
 
@@ -49,7 +53,7 @@ export default AppHeader;
 
 const DesktopHeader = () => {
     return (
-        <header className="bg-purple-50 border-b py-2 px-5 items-center justify-between flex">
+        <header className="bg-purple-50 border-b py-2 px-5 items-center justify-between flex gap-10">
             <section className="flex items-center space-x-8 bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">
                 <nav>
                     <ul className="flex items-center space-x-2">
@@ -76,7 +80,7 @@ const DesktopHeader = () => {
                         </li>
                     </ul>
                 </nav>
-                <div className="flex items-center space-x-4">
+                <div className="lg:flex items-center space-x-4 hidden">
                     <small className="text-xs font-medium">
                         {" "}
                         Explore more apps by{" "}
@@ -90,29 +94,7 @@ const DesktopHeader = () => {
 
             <section>
                 <GroupButtonsWrapper>
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button
-                                variant={"outline"}
-                                className="w-[15rem] justify-start text-muted-foreground"
-                            >
-                                <Search />
-                                Search a space...
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>
-                                    Are you absolutely sure?
-                                </DialogTitle>
-                                <DialogDescription>
-                                    This action cannot be undone. This will
-                                    permanently delete your account and remove
-                                    your data from our servers.
-                                </DialogDescription>
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
+                    <SearchSpace />
                     <Button> Feedback </Button>
                     <Button variant={"secondary"}>
                         {" "}
@@ -167,7 +149,7 @@ const MobileHeader = () => {
                 icon: PhoneCall,
                 active: pathname === "/contact",
             },
-                     {
+            {
                 title: "Terms",
                 url: "/terms",
                 icon: Terminal,
@@ -189,30 +171,9 @@ const MobileHeader = () => {
         <header className="fixed h-12 w-full  bg-purple-50 border-b py-2 px-5 flex items-center justify-between ">
             <p className="font-bold"> Colyra </p>
             <GroupButtonsWrapper>
-               
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button
-                            variant={"outline"}
-                            className="w-[15rem] justify-start text-muted-foreground"
-                        >
-                            <Search />
-                            Search a space...
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Are you absolutely sure?</DialogTitle>
-                            <DialogDescription>
-                                This action cannot be undone. This will
-                                permanently delete your account and remove your
-                                data from our servers.
-                            </DialogDescription>
-                        </DialogHeader>
-                    </DialogContent>
-                </Dialog>
-                 <Link href={'/feedback'}>
-                    <Button> 
+                <SearchSpace />
+                <Link href={"/feedback"}>
+                    <Button>
                         <Sticker />
                     </Button>
                 </Link>
@@ -230,7 +191,10 @@ const MobileHeader = () => {
                             <nav>
                                 <ul className="flex flex-col gap-2 text-sm">
                                     {navs.map((nav) => (
-                                        <li key={nav.title} onClick={() => setOpen(false)}>
+                                        <li
+                                            key={nav.title}
+                                            onClick={() => setOpen(false)}
+                                        >
                                             <Link
                                                 href={nav.url}
                                                 className={`  

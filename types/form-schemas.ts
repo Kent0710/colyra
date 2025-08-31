@@ -49,3 +49,7 @@ export const feedbackFormSchema = z.object({
     feature: z.string().optional(),
     sendEmail: z.boolean().optional(),
 })
+
+export const searchSpacesFormSchema = z.object({
+    query: z.string().min(1, "Search query cannot be empty"),
+});
