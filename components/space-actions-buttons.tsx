@@ -29,6 +29,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
+import { useSpacesStore } from "@/stores/useSpacesStore";
+
 const SpaceActionsButtons = () => {
     const createSpaceForm = useForm({
         resolver: zodResolver(createSpaceFormSchema),
@@ -55,7 +57,10 @@ const SpaceActionsButtons = () => {
         newSpaceCardLoader?.classList.remove("animate-pulse");
         newSpaceCardLoader?.classList.add("hidden");
 
-        if (res.success) {
+        if (res.success && res.space) {
+            // Update the spaces store
+            useSpacesStore.getState().addSpace(res.space);
+
             createSpaceForm.reset();
             toast.success("Space created successfully!");
         } else {
@@ -86,7 +91,7 @@ const SpaceActionsButtons = () => {
     };
 
     return (
-        <GroupButtonsWrapper className="flex items-center justify-between">
+        <GroupButtonsWrapper>
             <div className="space-x-2">
                 <Dialog>
                     <DialogTrigger asChild>
@@ -211,7 +216,7 @@ const SpaceActionsButtons = () => {
                 </Dialog>
             </div>
 
-            <Button variant={"special"}> Premium space </Button>
+            {/* <Button variant={"special"}> Premium space </Button> */}
         </GroupButtonsWrapper>
     );
 };

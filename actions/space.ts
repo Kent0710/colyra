@@ -9,8 +9,8 @@ import { z } from "zod";
 import { getAccount } from "./account";
 
 export interface GetSpacesSpaceResponseType {
-    isApproved: string;
-    isOwner: string;
+    isApproved: boolean;
+    isOwner: boolean;
     space_id: string;
     name: string;
 }
@@ -19,7 +19,7 @@ export async function getSpaces({
     limit = 5,
     offset = 0,
     filter,
-} : {
+}: {
     limit?: number;
     offset?: number;
     filter?: "owned" | "approved" | "pending" | "rejected" | "all";
@@ -58,8 +58,8 @@ export async function getSpaces({
             return {
                 spaces: [],
                 error: "Invalid filter",
-            }
-    };
+            };
+    }
 
     const { data, error } = await query;
 
@@ -72,7 +72,7 @@ export async function getSpaces({
         }));
 
         return {
-            spaces : spaces || [],
+            spaces: spaces || [],
             error: null,
         };
     } else {
@@ -166,6 +166,12 @@ export async function createSpace(
 
         return {
             success: true,
+            space: {
+                isApproved: true,
+                isOwner: true,
+                space_id: data.id,
+                name: data.name,
+            },
             error: null,
         };
     }
@@ -240,19 +246,11 @@ export async function deleteSpace(
     spaceId: string
 ): Promise<{ success: boolean; error: string | null }> {
     const supabase = await createClient();
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-        redirect("/login");
-    }
 
     const { error } = await supabase
         .from("space")
         .delete()
         .eq("id", spaceId)
-        .eq("user_id", user.id);
 
     if (!error) {
         revalidatePath("/home");
@@ -263,6 +261,7 @@ export async function deleteSpace(
         };
     }
 
+    console.info("Error deleting space: ", error);
     return {
         success: false,
         error: error.message,

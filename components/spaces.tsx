@@ -19,22 +19,38 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "./ui/skeleton";
 
-import { ArrowDown, Filter, Frown } from "lucide-react";
+import { ArrowDown, Ellipsis, Filter, Frown } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { SectionTitle } from "./reusables/titles";
 import { SectionHeaderWrapper } from "./reusables/wrappers";
+import { useSpacesStore } from "@/stores/useSpacesStore";
+import DeleteSpace from "./delete-space";
 
 interface SpacesProps {
     spaces: GetSpacesSpaceResponseType[];
 }
 
 const Spaces: React.FC<SpacesProps> = ({ spaces: initialSpaces }) => {
-    const [spaces, setSpaces] =
-        React.useState<GetSpacesSpaceResponseType[]>(initialSpaces);
+    const spaces = useSpacesStore((state) => state.spaces);
+    const setSpaces = useSpacesStore((state) => state.setSpaces);
+
+    // if store is still empty, initialize it directly
+    if (spaces.length === 0 && initialSpaces.length > 0) {
+        setSpaces(initialSpaces);
+    }
+
     const [filter, setFilter] = React.useState<string>("all");
     // For pagination
     const [page, setPage] = React.useState<number>(1);
@@ -51,7 +67,8 @@ const Spaces: React.FC<SpacesProps> = ({ spaces: initialSpaces }) => {
             offset: page * 5,
             filter: filter === "all" ? undefined : (filter as any),
         });
-        setSpaces((prev) => [...prev, ...newSpaces]);
+        // Append new spaces to the existing ones
+        setSpaces([...spaces, ...newSpaces]);
         setPage((prev) => prev + 1);
         setIsLoading(false);
     };
@@ -110,9 +127,28 @@ const Spaces: React.FC<SpacesProps> = ({ spaces: initialSpaces }) => {
                 </Select>
             </SectionHeaderWrapper>
             {spaces.map((space, index) => (
-                <Card key={space.name + index} className="my-4">
+                <Card key={space.name + index} className="my-4" id={space.space_id}>
                     <CardHeader>
-                        <CardTitle>{space.name}</CardTitle>
+                        <div className="flex justify-between items-center">
+                            <CardTitle>{space.name}</CardTitle>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost">
+                                        <Ellipsis />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                    <DropdownMenuLabel>
+                                        Space Actions
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem>
+                                        <DeleteSpace spaceId={space.space_id} />
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+
                         <CardDescription>
                             {space.isOwner
                                 ? "You own this space"
@@ -121,6 +157,7 @@ const Spaces: React.FC<SpacesProps> = ({ spaces: initialSpaces }) => {
                                 : "Your request is pending"}
                         </CardDescription>
                     </CardHeader>
+
                     <CardFooter>
                         <CardAction>
                             <Link href={`/spaces/${space.space_id}`}>
