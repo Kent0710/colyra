@@ -7,7 +7,11 @@ const SpacesLoader = async () => {
     const { spaces } = await getSpaces({ limit: 5, offset: 0, filter: "all" });
 
     if (spaces.length === 0) return <NoSpacesView />;
-    return <Spaces spaces={spaces} />;
+    // return <Spaces spaces={spaces} />;
+
+    return (
+        <Spaces spaces={spaces} />
+    );
 };
 
 export default SpacesLoader;

@@ -55,12 +55,13 @@ interface SpacesProps {
 const Spaces: React.FC<SpacesProps> = ({ spaces: initialSpaces }) => {
     const spaces = useSpacesStore((state) => state.spaces);
     const setSpaces = useSpacesStore((state) => state.setSpaces);
+    const hasBeenModified = useSpacesStore((state) => state.hasBeenModified);
 
     React.useEffect(() => {
-        if (spaces.length === 0 && initialSpaces.length > 0) {
+        if (!hasBeenModified && spaces.length === 0 && initialSpaces.length > 0) {
             setSpaces(initialSpaces);
         }
-    }, [spaces.length, initialSpaces, setSpaces]);
+    }, [spaces.length, initialSpaces, setSpaces, hasBeenModified]);
 
     const [filter, setFilter] = React.useState<string>("all");
     // For pagination loading state
