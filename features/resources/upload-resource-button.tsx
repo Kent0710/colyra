@@ -1,3 +1,5 @@
+'use client'
+
 import {
     Dialog,
     DialogContent,
@@ -21,8 +23,10 @@ interface UploadResourceButtonProps {
 const UploadResourceButton : React.FC<UploadResourceButtonProps> = ({
     spaceId
 }) => {
+    const [dialogOpen, setDialogOpen] = React.useState(false);
+
     return (
-        <Dialog>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
                 <Button>
                     {" "}
@@ -44,7 +48,7 @@ const UploadResourceButton : React.FC<UploadResourceButtonProps> = ({
                             <TabsTrigger value="file">File</TabsTrigger>
                         </TabsList>
                         <TabsContent value="link">
-                            <UploadResourceLinkForm />
+                            <UploadResourceLinkForm spaceId={spaceId} setDialogOpen={setDialogOpen} />
                         </TabsContent>
                         <TabsContent value="file">
                             <UploadedMaterials spaceId={spaceId} />

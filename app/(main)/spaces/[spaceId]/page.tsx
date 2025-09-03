@@ -60,7 +60,7 @@ const SingleSpacePage: React.FC<SingleSpacePageProps> = async ({ params }) => {
                         </SheetContent>
                     </Sheet>
 
-                    <Button>
+                    <Button variant={'secondary'}>
                         {" "}
                         <Settings2 />{" "}
                     </Button>

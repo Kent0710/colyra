@@ -161,6 +161,7 @@ const SpaceActionsButtons = () => {
                                                             );
                                                         }}
                                                         type="button"
+                                                        variant={'secondary'}
                                                     >
                                                         Generate
                                                     </Button>

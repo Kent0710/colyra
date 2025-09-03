@@ -15,14 +15,19 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useParams } from "next/navigation";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import React from "react";
 
-const UploadResourceLinkForm = () => {
-    // Get the spaceId from the URL
-    const params = useParams();
-    const { spaceId } = params;
+interface UploadResourceLinkFormProps {
+    spaceId : string;
+    setDialogOpen : React.Dispatch<React.SetStateAction<boolean>>;
+}
 
+const UploadResourceLinkForm : React.FC<UploadResourceLinkFormProps> = ({
+    spaceId,
+    setDialogOpen
+}) => {
     const form = useForm({
         resolver: zodResolver(uploadResourceLinkFormSchema),
         defaultValues: {
@@ -47,6 +52,7 @@ const UploadResourceLinkForm = () => {
         newResourceCardLoader?.classList.add("hidden");
 
         if (res.success) {
+            setDialogOpen(false);
             form.reset();
             toast.success("Resource link uploaded successfully");
         } else {
@@ -93,7 +99,15 @@ const UploadResourceLinkForm = () => {
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Upload link</Button>
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                    {form.formState.isSubmitting ? (
+                        <>
+                            <Loader2 className="animate-spin" /> Uploading...
+                        </>
+                    ) : (
+                        "Share Link"
+                    )}
+                </Button>
             </form>
         </Form>
     );

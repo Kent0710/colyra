@@ -1,5 +1,5 @@
 export const PageTitle = ({ children }: { children: React.ReactNode }) => (
-    <h1 className="text-2xl font-bold">{children}</h1>
+    <h1 className="text-2xl font-bold text-primary">{children}</h1>
 );
 
 export const PageTitleDescription = ({ children }: { children: React.ReactNode }) => (
@@ -7,7 +7,7 @@ export const PageTitleDescription = ({ children }: { children: React.ReactNode }
 );
 
 export const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-    <h2 className="text-lg font-semibold">{children}</h2>
+    <h2 className="text-lg font-semibold text-primary">{children}</h2>
 );
 
 export const SectionSubTitle = ({ children }: { children: React.ReactNode }) => (

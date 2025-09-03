@@ -6,7 +6,7 @@ export default function MainLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col h-screen ">
             <AppHeader />
 
             {/* Parent is flex-col with h-screen, so main gets bounded height */}

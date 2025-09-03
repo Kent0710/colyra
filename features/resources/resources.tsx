@@ -89,8 +89,8 @@ const Resources: React.FC<ResourcesProps> = async ({ className, spaceId }) => {
                         </DialogTrigger>
                         <DialogContent className="w-[35rem]">
                             <DialogHeader>
-                                <DialogTitle>{resource.name}</DialogTitle>
-                                <DialogDescription>
+                                <DialogTitle className="text-left">{resource.name}</DialogTitle>
+                                <DialogDescription className="text-left">
                                     {resource.user_id}
                                 </DialogDescription>
                             </DialogHeader>
@@ -101,12 +101,12 @@ const Resources: React.FC<ResourcesProps> = async ({ className, spaceId }) => {
                                 </p>
                             </main>
                             <DialogFooter>
-                                <GroupButtonsWrapper className="flex-wrap">
-                                    <DeleteResourceButton
-                                        resourceId={resource.id}
-                                    />
+                                <GroupButtonsWrapper className="justify-between items-center flex gap-2">
                                     <CopyResourceLinkButton
                                         link={resource.link}
+                                    />
+                                    <DeleteResourceButton
+                                        resourceId={resource.id}
                                     />
                                 </GroupButtonsWrapper>
                             </DialogFooter>

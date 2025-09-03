@@ -53,7 +53,7 @@ const SearchSpace = () => {
                     render={({ field }) => (
                         <FormItem
                             onChange={handleSearchOnChange}
-                            className="w-[10rem] sm:w-[15rem] xl:w-[20rem]"
+                            className="w-[15rem] sm:w-[15rem] xl:w-[20rem]"
                         >
                             <FormControl>
                                 <div className="relative">
@@ -62,7 +62,7 @@ const SearchSpace = () => {
                                         autoComplete="off"
                                         placeholder="Search a space..."
                                         {...field}
-                                        className="text-sm font-medium bg-white"
+                                        className="text-sm font-medium bg-white text-neutral-700"
                                     />
                                     {queryResult && (
                                         <div className="absolute bg-purple-50 border shadow-sm h-fit p-2 rounded-lg  w-full mt-4">

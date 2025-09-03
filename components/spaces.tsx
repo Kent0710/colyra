@@ -30,13 +30,23 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "./ui/skeleton";
 
-import { ArrowDown, Ellipsis, Filter, Frown } from "lucide-react";
+import {
+    ArrowDown,
+    ArrowRight,
+    Ellipsis,
+    File,
+    Filter,
+    Frown,
+    Link2,
+    MessageCircle,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { SectionTitle } from "./reusables/titles";
 import { SectionHeaderWrapper } from "./reusables/wrappers";
 import { useSpacesStore } from "@/stores/useSpacesStore";
 import DeleteSpace from "./delete-space";
+import { Badge } from "./ui/badge";
 
 interface SpacesProps {
     spaces: GetSpacesSpaceResponseType[];
@@ -46,10 +56,11 @@ const Spaces: React.FC<SpacesProps> = ({ spaces: initialSpaces }) => {
     const spaces = useSpacesStore((state) => state.spaces);
     const setSpaces = useSpacesStore((state) => state.setSpaces);
 
-    // if store is still empty, initialize it directly
-    if (spaces.length === 0 && initialSpaces.length > 0) {
-        setSpaces(initialSpaces);
-    }
+    React.useEffect(() => {
+        if (spaces.length === 0 && initialSpaces.length > 0) {
+            setSpaces(initialSpaces);
+        }
+    }, [spaces.length, initialSpaces, setSpaces]);
 
     const [filter, setFilter] = React.useState<string>("all");
     // For pagination loading state
@@ -136,11 +147,16 @@ const Spaces: React.FC<SpacesProps> = ({ spaces: initialSpaces }) => {
                 </Select>
             </SectionHeaderWrapper>
             <section className="grid grid-cols-1 mt-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {spaces.map((space, index) => (
+                {spaces?.map((space, index) => (
                     <Card key={space.name + index} id={space.space_id}>
                         <CardHeader>
                             <div className="flex justify-between items-center">
-                                <CardTitle>{space.name}</CardTitle>
+                                <section className="space-y-2">
+                                    <Badge> Owned </Badge>
+                                    <CardTitle className="text-primary">
+                                        {space.name}
+                                    </CardTitle>
+                                </section>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <Button variant="ghost">
@@ -161,19 +177,29 @@ const Spaces: React.FC<SpacesProps> = ({ spaces: initialSpaces }) => {
                                 </DropdownMenu>
                             </div>
 
-                            <CardDescription>
-                                {space.isOwner
-                                    ? "You own this space"
-                                    : space.isApproved
-                                    ? "You are approved in this space"
-                                    : "Your request is pending"}
+                            <CardDescription className="flex gap-4">
+                                <section className="flex items-center gap-2">
+                                    <Link2 size={17} />
+                                    <span>0 links</span>
+                                </section>
+                                <section className="flex items-center gap-2">
+                                    <File size={17} /> <span>0 files</span>
+                                </section>
+                                <section className="flex items-center gap-2">
+                                    <MessageCircle size={17} />{" "}
+                                    <span> Chat active </span>
+                                </section>
                             </CardDescription>
                         </CardHeader>
 
-                        <CardFooter>
-                            <CardAction>
-                                <Link href={`/spaces/${space.space_id}`}>
-                                    <Button>View Space</Button>
+                        <CardFooter className="border-t border-pink-300 pt-4 hover:opacity-70 transition-opacity">
+                            <CardAction className="w-full">
+                                <Link
+                                    href={`/spaces/${space.space_id}`}
+                                    className="flex items-center justify-between gap-2 w-full text-sm text-muted-foreground"
+                                >
+                                    <span>Tap to open this space</span>
+                                    <ArrowRight  size={17} />
                                 </Link>
                             </CardAction>
                         </CardFooter>

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sheet";
 import {
     CircleQuestionMark,
+    File,
     HelpCircle,
     Home,
     LayoutGrid,
@@ -17,26 +18,15 @@ import {
     PanelRightOpen,
     PhoneCall,
     Rocket,
-    Search,
     Sticker,
     Terminal,
     User,
 } from "lucide-react";
 
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
-
 import Link from "next/link";
 import { useIsMobile } from "@/hooks/use-mobile";
 import React, { useMemo } from "react";
 import { usePathname } from "next/navigation";
-
 
 import { Button } from "@/components/ui/button";
 
@@ -168,18 +158,16 @@ const MobileHeader = () => {
     const [open, setOpen] = React.useState(false);
 
     return (
-        <header className="fixed h-12 w-full  bg-purple-50 border-b py-2 px-5 flex items-center justify-between ">
-            <p className="font-bold"> Colyra </p>
+        <header className="fixed h-12 w-full bg-primary text-white rounded-b-lg shadow-lg border-b mr-[10rem] py-2 px-5 flex items-center justify-between ">
+            <div className="flex items-center gap-2">
+                <File />
+                <p className="font-bold"> Colyra </p>
+            </div>
             <GroupButtonsWrapper>
                 <SearchSpace />
-                <Link href={"/feedback"}>
-                    <Button>
-                        <Sticker />
-                    </Button>
-                </Link>
                 <Sheet open={open} onOpenChange={setOpen}>
                     <SheetTrigger asChild>
-                        <Button variant={"outline"}>
+                        <Button variant={"headerButton"}>
                             <PanelRightOpen />
                         </Button>
                     </SheetTrigger>
